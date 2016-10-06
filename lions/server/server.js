@@ -5,13 +5,12 @@ var app = express();
 
 var lionRouter = require('./lions');
 
-app.use(express.static('.'));
+app.use(express.static('client'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(morgan());
 
 app.use('/lions', lionRouter);
-
 
 /**
  * Error handler
@@ -23,5 +22,4 @@ app.use(function(err, req, res, next) {
   }
 });
 
-app.listen(3000);
-console.log('Listening on port 3000');
+module.exports = app;
