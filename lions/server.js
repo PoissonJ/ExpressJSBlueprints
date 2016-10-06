@@ -1,6 +1,7 @@
 var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
+var morgan = require('morgan');
 var _ = require('lodash');
 var app = express();
 
@@ -8,23 +9,40 @@ var app = express();
 app.use(express.static('.'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(morgan());
 
 var lions = [];
 var id = 0;
+
+var updateId = function(req, res, next) {
+  if (!req.body.id) {
+    id++;
+    req.body.id = id + '';
+  }
+  next();
+}
+
+app.param('id', function(req, res, next, id) {
+  var lion = _.find(lions, {id: req.params.id});
+
+  if (lion) {
+    req.lion = lion;
+    next();
+  } else {
+    res.status(500).send();
+  }
+});
 
 app.get('/lions', function(req, res) {
   res.send(lions);
 });
 
 app.get('/lions/:id', function(req, res) {
-  var lion = _.find(lions, {id: req.params.id});
-  res.json(lion || {});
+  res.json(req.lion || {});
 });
 
-app.post('/lions', function(req, res) {
+app.post('/lions', updateId, function(req, res) {
   var lion = req.body;
-  id++;
-  lion.id = id + '';
 
   lions.push(lion);
 
@@ -54,6 +72,16 @@ app.delete('/lions/:id', function(req, res) {
     var deletedLion = lions[lion]
     lions.splice(lion, 1);
     res.json(deletedLion);
+  }
+});
+
+
+/**
+ * Error handler
+ */
+app.use(function(err, req, res, next) {
+  if (err) {
+    res.status(500).send(err);
   }
 });
 
