@@ -13,7 +13,9 @@ var updateId = function(req, res, next) {
 }
 
 lionRouter.param('id', function(req, res, next, id) {
-  var lion = _.find(lions, {id: req.params.id});
+  var lion = _.find(lions, {
+    id: req.params.id
+  });
 
   if (lion) {
     req.lion = lion;
@@ -23,46 +25,49 @@ lionRouter.param('id', function(req, res, next, id) {
   }
 });
 
-lionRouter.get('/', function(req, res) {
-  res.send(lions);
-});
+lionRouter.route('/')
+  .get(function(req, res) {
+    res.send(lions);
+  })
+  .post(updateId, function(req, res) {
+    var lion = req.body;
 
-lionRouter.get('/:id', function(req, res) {
-  res.json(req.lion || {});
-});
+    lions.push(lion);
 
-lionRouter.post('/', updateId, function(req, res) {
-  var lion = req.body;
+    res.json(lion);
+  });
 
-  lions.push(lion);
+lionRouter.route('/:id')
+  .get(function(req, res) {
+    res.json(req.lion || {});
+  })
+  .put(function(req, res) {
+    var update = req.body;
+    if (update.id) {
+      delete update.id
+    }
 
-  res.json(lion);
-});
-
-lionRouter.put('/:id', function(req, res) {
-  var update = req.body;
-  if (update.id) {
-    delete update.id
-  }
-
-  var lion = _.findIndex(lions, {id: req.params.id});
-  if (!lions[lion]) {
-    res.status(500).send();
-  } else {
-    var updatedLion = _.assign(lions[lion], update);
-    res.json(updatedLion);
-  }
-});
-
-lionRouter.delete('/:id', function(req, res) {
-  var lion = _.findIndex(lions, {id: req.params.id});
-  if (!lions[lion]) {
-    res.status(500).send();
-  } else {
-    var deletedLion = lions[lion]
-    lions.splice(lion, 1);
-    res.json(deletedLion);
-  }
-});
+    var lion = _.findIndex(lions, {
+      id: req.params.id
+    });
+    if (!lions[lion]) {
+      res.status(500).send();
+    } else {
+      var updatedLion = _.assign(lions[lion], update);
+      res.json(updatedLion);
+    }
+  })
+  .delete(function(req, res) {
+    var lion = _.findIndex(lions, {
+      id: req.params.id
+    });
+    if (!lions[lion]) {
+      res.status(500).send();
+    } else {
+      var deletedLion = lions[lion]
+      lions.splice(lion, 1);
+      res.json(deletedLion);
+    }
+  });
 
 module.exports = lionRouter;
