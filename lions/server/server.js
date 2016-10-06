@@ -8,7 +8,7 @@ var lionRouter = require('./lions');
 app.use(express.static('client'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(morgan());
+app.use(morgan('dev'));
 
 app.use('/lions', lionRouter);
 
