@@ -5,7 +5,9 @@ var api = require('./api/api'); // Router
 // Setup middleware
 require('./middleware/appMiddleware')(app);
 
-// Setup the app
-app.use('/api/', api);
+// Setup the api
+app.use('/api', api);
 
-module.export = app
+// Error handling
+
+module.exports = app

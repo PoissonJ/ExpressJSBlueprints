@@ -1,5 +1,5 @@
 var morgan = require('morgan');
-var bodyParder = require('body-parser');
+var bodyParser = require('body-parser');
 
 // Setup global middleware
 module.exports = function(app) {
