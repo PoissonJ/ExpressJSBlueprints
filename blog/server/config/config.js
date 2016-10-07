@@ -13,6 +13,12 @@ process.env.NODE_ENV = process.env.NODE_ENV || config.dev;
 config.env = process.env.NODE_ENV;
 
 var envConfig = {};
-envConfig = require('./' + config.env);
+try {
+  envConfig = require('./' + config.env); // gets the object from the associated file
+
+  envConfig = envConfig || {};
+} catch (e) {
+  envConfig = {};
+}
 
 module.exports = _.merge(config, envConfig);

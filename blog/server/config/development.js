@@ -1,3 +1,3 @@
 module.exports = {
-  loggine: true
+  logging: true
 };
