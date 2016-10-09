@@ -9,3 +9,4 @@ router.use('/categories', categoryRoutes);
 router.use('/posts', postRoutes);
 
 module.exports = router;
+
